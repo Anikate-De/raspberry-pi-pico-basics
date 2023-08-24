@@ -60,11 +60,14 @@ while True:
     
     getGPS(gpsModule)
 
+    url = "https://www.google.com/maps/search/?api=1&query="+latitude+","+longitude
+
     if(FIX_STATUS == True):
         print("Printing GPS data...")
         print(" ")
         print("Latitude: "+latitude)
         print("Longitude: "+longitude)
+        print("URLGoogleMaps: "+url)
         print("Satellites: " +satellites)
         print("Time: "+GPStime)
         print("----------------------")
