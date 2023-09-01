@@ -77,20 +77,16 @@ while True:
             response = html.format(SSID, '', 'disabled')
             print('LED OFF')
 
-
-
         cl_file = client.makefile('rwb', 0)
         while True:
             line = cl_file.readline()
             if not line or line == b'\r\n':
                 break
-        
+
         client.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
         client.send(response)
         client.close()
 
-
     except OSError as e:
         client.close()
         print('Connection closed')
-    

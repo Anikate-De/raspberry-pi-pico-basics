@@ -61,13 +61,15 @@ FIFO_count_list = list()
 duty_acw = 0.75
 duty_cw = 0.75
 
-def calibrate_escs(esc_start = ESC_START):
+
+def calibrate_escs(esc_start=ESC_START):
     print('Calibrating ESCs...')
     esc_cw.duty_u16(esc_start)
     esc_acw.duty_u16(esc_start)
     sleep(6)
 
-def incrementally_start_esc(escs, end = 4075, start = ESC_START):
+
+def incrementally_start_esc(escs, end=4075, start=ESC_START):
     print('Slow starting ESCs to a duty level of', end, '...')
 
     for i in range(start, end, 1):
@@ -79,6 +81,7 @@ def incrementally_start_esc(escs, end = 4075, start = ESC_START):
 
     for esc in escs:
         esc.duty_u16(end)
+
 
 calibrate_escs()
 incrementally_start_esc(escs=[esc_cw, esc_acw])

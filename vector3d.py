@@ -42,6 +42,7 @@ class Vector3d(object):
     Internally uses sensor relative coordinates.
     Returns vehicle-relative x, y and z values.
     '''
+
     def __init__(self, transposition, scaling, update_function):
         self._vector = [0, 0, 0]
         self._ivector = [0, 0, 0]
@@ -49,7 +50,8 @@ class Vector3d(object):
         self.argcheck(transposition, "Transposition")
         self.argcheck(scaling, "Scaling")
         if set(transposition) != {0, 1, 2}:
-            raise ValueError('Transpose indices must be unique and in range 0-2')
+            raise ValueError(
+                'Transpose indices must be unique and in range 0-2')
         self._scale = scaling
         self._transpose = transposition
         self.update = update_function
@@ -66,7 +68,8 @@ class Vector3d(object):
         calibration routine, sets cal
         '''
         self.update()
-        maxvec = self._vector[:]                # Initialise max and min lists with current values
+        # Initialise max and min lists with current values
+        maxvec = self._vector[:]
         minvec = self._vector[:]
         while not stopfunc():
             waitfunc()

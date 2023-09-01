@@ -117,7 +117,6 @@ async def serve(reader, writer):
     request = str(request)
     index = request.find('led=')
     value = request[index + 4:index + 7]
-    
 
     if index == -1:
         value = 0
@@ -143,7 +142,6 @@ async def main():
     while True:
         led.duty_u16(int(duty * 650.25))
         await uasyncio.sleep(0.0001)
-        
 
 
 try:

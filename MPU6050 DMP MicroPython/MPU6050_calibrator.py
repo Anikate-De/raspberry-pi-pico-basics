@@ -1,6 +1,7 @@
+import struct
+
 from MPU6050RPI import MPU6050
 from SimplePID import SimplePID
-import struct
 
 
 def to_short(somebytes):
@@ -192,4 +193,3 @@ try:
 
 except KeyboardInterrupt:
     pass
-

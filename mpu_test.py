@@ -26,9 +26,10 @@ def calculateAngles(ax, ay, az):
     angle_pitch = -atan(ax/sqrt(ay**2 + az**2)) * (180 / pi)
     return angle_roll, angle_pitch
 
+
 def calibrateGyro():
     global gx_cal, gy_cal, gz_cal
-        
+
     gyro_cal_count = 1000
 
     for i in range(gyro_cal_count):
@@ -37,8 +38,8 @@ def calibrateGyro():
         gx_cal += imu.gyro.x
         gy_cal += imu.gyro.y
         gz_cal += imu.gyro.z
-        
-        sleep(0.001) # sleep for 10ms
+
+        sleep(0.001)  # sleep for 10ms
 
     gx_cal /= gyro_cal_count
     gy_cal /= gyro_cal_count
@@ -47,6 +48,7 @@ def calibrateGyro():
     print("Gyroscope calibration complete! :", gx_cal, gy_cal, gz_cal)
 
     input("Press any key then enter to start...")
+
 
 def kalman_1d(kalman_state, kalman_uncertainty, kalman_input, kalman_measurement):
     global kalman_1d_output
@@ -60,21 +62,22 @@ def kalman_1d(kalman_state, kalman_uncertainty, kalman_input, kalman_measurement
     kalman_1d_output[0] = kalman_state
     kalman_1d_output[1] = kalman_uncertainty
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
 
     calibrateGyro()
 
-    while True:    
+    while True:
 
-        ax=imu.accel.x - 0.06 # calibration
-        ay=imu.accel.y + 0.01 # calibration
-        az=imu.accel.z + 0.116 # calibration
-        
-        gx=imu.gyro.x - gx_cal
-        gy=imu.gyro.y - gy_cal
-        gz=imu.gyro.z - gz_cal
-        
-        tem=imu.temperature
+        ax = imu.accel.x - 0.06  # calibration
+        ay = imu.accel.y + 0.01  # calibration
+        az = imu.accel.z + 0.116  # calibration
+
+        gx = imu.gyro.x - gx_cal
+        gy = imu.gyro.y - gy_cal
+        gz = imu.gyro.z - gz_cal
+
+        tem = imu.temperature
 
         roll, pitch = calculateAngles(ax, ay, az)
 
@@ -82,8 +85,9 @@ if __name__=="__main__":
         kalman_angle_roll = kalman_1d_output[0]
         kalman_uncertainty_angle_roll = kalman_1d_output[1]
 
-        kalman_1d(kalman_angle_pitch, kalman_uncertainty_angle_pitch, gy, pitch)
+        kalman_1d(kalman_angle_pitch,
+                  kalman_uncertainty_angle_pitch, gy, pitch)
         kalman_angle_pitch = kalman_1d_output[0]
         kalman_uncertainty_angle_pitch = kalman_1d_output[1]
-        
+
         print("Roll:", kalman_angle_roll, "Pitch:", kalman_angle_pitch)

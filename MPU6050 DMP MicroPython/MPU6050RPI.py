@@ -1,12 +1,13 @@
-import math
-import time
-import smbus
 import csv
+import math
+import struct
+import time
+
+import smbus
 from MPUConstants import MPUConstants as C
 from Quaternion import Quaternion as Q
 from Quaternion import XYZVector as V
 
-import struct
 
 class ValObject:
     value = None

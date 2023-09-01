@@ -39,6 +39,7 @@ THE SOFTWARE.
 
 from machine import I2C
 from utime import sleep_ms
+
 from vector3d import Vector3d
 
 
@@ -67,19 +68,22 @@ class MPU6050(object):
     '''
 
     _I2Cerror = "I2C failure when communicating with IMU"
-    _mpu_addr = (104, 105)  # addresses of MPU9150/MPU6050. There can be two devices
+    # addresses of MPU9150/MPU6050. There can be two devices
+    _mpu_addr = (104, 105)
     _chip_id = 104
 
     def __init__(self, side_str, device_addr=None, transposition=(0, 1, 2), scaling=(1, 1, 1)):
 
         self._accel = Vector3d(transposition, scaling, self._accel_callback)
         self._gyro = Vector3d(transposition, scaling, self._gyro_callback)
-        self.buf1 = bytearray(1)                # Pre-allocated buffers for reads: allows reads to
+        # Pre-allocated buffers for reads: allows reads to
+        self.buf1 = bytearray(1)
         self.buf2 = bytearray(2)                # be done in interrupt handlers
         self.buf3 = bytearray(3)
         self.buf6 = bytearray(6)
 
-        sleep_ms(200)                           # Ensure PSU and device have settled
+        # Ensure PSU and device have settled
+        sleep_ms(200)
         if isinstance(side_str, str):           # Non-pyb targets may use other than X or Y
             self._mpu_i2c = I2C(side_str)
         elif hasattr(side_str, 'readfrom'):     # Soft or hard I2C instance. See issue #3097
@@ -96,13 +100,15 @@ class MPU6050(object):
             elif number_of_mpus == 1:
                 self.mpu_addr = mpus.pop()
             else:
-                raise ValueError("Two MPU's detected: must specify a device address")
+                raise ValueError(
+                    "Two MPU's detected: must specify a device address")
         else:
             if device_addr not in (0, 1):
                 raise ValueError('Device address must be 0 or 1')
             self.mpu_addr = self._mpu_addr[device_addr]
 
-        self.chip_id                     # Test communication by reading chip_id: throws exception on error
+        # Test communication by reading chip_id: throws exception on error
+        self.chip_id
         # Can communicate with chip. Set it up.
         self.wake()                             # wake it up
         self.passthrough = True                 # Enable mag access from main I2C bus
@@ -110,7 +116,8 @@ class MPU6050(object):
         self.gyro_range = 0                     # Likewise for gyro
 
     # read from device
-    def _read(self, buf, memaddr, addr):        # addr = I2C device address, memaddr = memory location within the I2C device
+    # addr = I2C device address, memaddr = memory location within the I2C device
+    def _read(self, buf, memaddr, addr):
         '''
         Read bytes to pre-allocated buffer Caller traps OSError.
         '''
@@ -158,7 +165,8 @@ class MPU6050(object):
             raise MPUException(self._I2Cerror)
         chip_id = int(self.buf1[0])
         if chip_id != self._chip_id:
-            raise ValueError('Bad chip ID retrieved: MPU communication failure')
+            raise ValueError(
+                'Bad chip ID retrieved: MPU communication failure')
         return chip_id
 
     @property
@@ -324,7 +332,8 @@ class MPU6050(object):
         gr_bytes = (0x00, 0x08, 0x10, 0x18)
         if gyro_range in range(len(gr_bytes)):
             try:
-                self._write(gr_bytes[gyro_range], 0x1B, self.mpu_addr)  # Sets fchoice = b11 which enables filter
+                # Sets fchoice = b11 which enables filter
+                self._write(gr_bytes[gyro_range], 0x1B, self.mpu_addr)
             except OSError:
                 raise MPUException(self._I2Cerror)
         else:
@@ -350,9 +359,12 @@ class MPU6050(object):
         self._accel._ivector[1] = bytes_toint(self.buf6[2], self.buf6[3])
         self._accel._ivector[2] = bytes_toint(self.buf6[4], self.buf6[5])
         scale = (16384, 8192, 4096, 2048)
-        self._accel._vector[0] = self._accel._ivector[0]/scale[self.accel_range]
-        self._accel._vector[1] = self._accel._ivector[1]/scale[self.accel_range]
-        self._accel._vector[2] = self._accel._ivector[2]/scale[self.accel_range]
+        self._accel._vector[0] = self._accel._ivector[0] / \
+            scale[self.accel_range]
+        self._accel._vector[1] = self._accel._ivector[1] / \
+            scale[self.accel_range]
+        self._accel._vector[2] = self._accel._ivector[2] / \
+            scale[self.accel_range]
 
     def get_accel_irq(self):
         '''

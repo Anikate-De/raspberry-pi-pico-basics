@@ -2,8 +2,8 @@ import time
 
 import network
 import uasyncio
-from machine import PWM, Pin
 from gpio_lcd import GpioLcd
+from machine import PWM, Pin
 
 SSID = 'Uday Karthikeya'
 PASSWORD = '87654321'
@@ -11,7 +11,7 @@ PASSWORD = '87654321'
 onboard = Pin('LED', Pin.OUT)
 
 text = 'started'
- 
+
 # Create the LCD object
 lcd = GpioLcd(rs_pin=Pin(8),
               enable_pin=Pin(9),
@@ -117,7 +117,6 @@ async def serve(reader, writer):
     index = request.find('lcd=')
     indexEnd = request.find('HTTP')
     value = request[index + 4:indexEnd]
-    
 
     if index == -1 and indexEnd == -1:
         value = 0
@@ -125,7 +124,7 @@ async def serve(reader, writer):
     print('Value:', value)
 
     global text
-    text = value.replace("%20"," ")
+    text = value.replace("%20", " ")
     lcd.clear()
     lcd.putstr(str(text))
 
@@ -146,8 +145,6 @@ async def main():
         await uasyncio.sleep(0.0001)
         # lcd.clear()5
 
-        
-
 
 try:
     uasyncio.run(main())
@@ -157,4 +154,3 @@ try:
     #     time.sleep(0.1)
 finally:
     uasyncio.new_event_loop()
-

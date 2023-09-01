@@ -95,7 +95,7 @@ def connect():
         print('Network config:', wlan.ifconfig())
         led.value(1)
         global html
-        html = html.format(network = SSID,addr=wlan.ifconfig()[0])
+        html = html.format(network=SSID, addr=wlan.ifconfig()[0])
     else:
         print('Connection failed to network', SSID)
         led.value(0)

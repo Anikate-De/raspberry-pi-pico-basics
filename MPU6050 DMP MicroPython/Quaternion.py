@@ -86,4 +86,3 @@ class XYZVector:
         r = XYZVector(self.x, self.y, self.z)
         r.rotate(a_quat)
         return r
-

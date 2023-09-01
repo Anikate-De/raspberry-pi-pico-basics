@@ -132,4 +132,3 @@ class SimplePID():
         else:
             kd = 0.0 - self.__kd
         self.__coeff_c = kd / (self.__delta_time_ms / 1000.0)
-

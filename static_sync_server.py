@@ -66,13 +66,11 @@ while True:
                 break
 
         response = html.format(SSID, time.ticks_cpu() // 1000000)
-        
+
         client.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
         client.send(response)
         client.close()
 
-
     except OSError as e:
         client.close()
         print('Connection closed')
-    

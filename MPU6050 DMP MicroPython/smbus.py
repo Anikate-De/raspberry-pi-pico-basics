@@ -1,18 +1,20 @@
 """ Provides an SMBus class for use on micropython """
+
+
 class SMBus:
     """ Provides an 'SMBus' module which supports some of the py-smbus
         i2c methods
         Hopefully this will allow you to run code that was targeted at
         py-smbus unmodified on micropython.
 
-	    Use it like you would the machine.I2C class:
+            Use it like you would the machine.I2C class:
 
             import usmbus.SMBus
 
             bus = SMBus(1, pins=('G15','G10'), baudrate=100000)
             bus.read_byte_data(addr, register)
             ... etc
-	"""
+        """
 
     def __init__(self, i2c):
         self.i2c = i2c
@@ -43,5 +45,3 @@ class SMBus:
         if isinstance(data, int):
             data = bytes([data])
         return self.i2c.writeto_mem(addr, register, data)
-
-
