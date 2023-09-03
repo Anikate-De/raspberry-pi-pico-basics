@@ -29,6 +29,20 @@ mpu = MPU6050(i2c, device_address, x_accel_offset, y_accel_offset,
               z_accel_offset, x_gyro_offset, y_gyro_offset, z_gyro_offset,
               enable_debug_output)
 
+mpu.dmp_initialize()
+mpu.set_DMP_enabled(True)
+mpu_int_status = mpu.get_int_status()
+
+packet_size = mpu.DMP_get_FIFO_packet_size()
+FIFO_count = mpu.get_FIFO_count()
+
+FIFO_buffer = [0]*64
+
+FIFO_count_list = list()
+
+duty_acw = 0.75
+duty_cw = 0.75
+
 
 def rangify(value, init_start=-15.0, init_end=15.0, final_start=0.0, final_end=65535.0):
     if value < init_start:
@@ -45,22 +59,6 @@ def rangify(value, init_start=-15.0, init_end=15.0, final_start=0.0, final_end=6
     new_value = distance * ratio + final_start
 
     return new_value
-
-
-mpu.dmp_initialize()
-mpu.set_DMP_enabled(True)
-mpu_int_status = mpu.get_int_status()
-
-packet_size = mpu.DMP_get_FIFO_packet_size()
-FIFO_count = mpu.get_FIFO_count()
-
-FIFO_buffer = [0]*64
-
-FIFO_count_list = list()
-
-duty_acw = 0.75
-duty_cw = 0.75
-
 
 def calibrate_escs(esc_start=ESC_START):
     print('Calibrating ESCs...')
