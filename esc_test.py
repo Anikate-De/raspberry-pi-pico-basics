@@ -1,9 +1,9 @@
-from machine import ADC, PWM, Pin
+from machine import PWM, Pin
 
-esc = PWM(Pin(0))
-pot = ADC(26)
+esc_a, esc_b = PWM(Pin(0)), PWM(Pin(6))
 
-esc.freq(50)
+esc_a.freq(50)
+esc_b.freq(50)
 
 
 def rangify(value):
@@ -23,9 +23,9 @@ def rangify(value):
 
     return int(new_value)
 
-
 while True:
-    pot_val = pot.read_u16()
-    duty = rangify(pot_val)
-    print("Potentiometer value: ", pot_val, ' Duty: ', duty)
-    esc.duty_u16(duty)
+    duty = int(input('Enter duty cycle (in ms): ')) * 1000
+    esc_a.duty_ns(duty)
+    esc_b.duty_ns(duty + 35000)
+    print("Duty value: (in ns)", duty)
+    
