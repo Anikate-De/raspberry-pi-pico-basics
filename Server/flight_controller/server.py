@@ -15,20 +15,24 @@ sys.path.append('../../')
 
 from utils import *
 
-throttle_duty = 0
-yaw_duty = 0
+throttle_cw_duty = 0
+throttle_acw_duty = 0
+
 pitch_duty = 0
 roll_duty = 0
 
-throttle = PWM(Pin(0))
-throttle.freq(50)
-throttle.duty_u16(throttle_duty)
-yaw = PWM(Pin(6))
-yaw.freq(50)
-yaw.duty_u16(yaw_duty)
+throttle_cw = PWM(Pin(0))
+throttle_cw.freq(50)
+throttle_cw.duty_u16(throttle_cw_duty)
+
+throttle_acw = PWM(Pin(6))
+throttle_acw.freq(50)
+throttle_acw.duty_u16(throttle_acw_duty)
+
 pitch = PWM(Pin(10))
 pitch.freq(50)
 pitch.duty_u16(pitch_duty)
+
 roll = PWM(Pin(14))
 roll.freq(50)
 roll.duty_u16(roll_duty)
@@ -60,17 +64,31 @@ async def controls(request, ws):
 
             data = ujson.loads(data)
 
-            throttle_duty = rangify(float(data['throttle']), 0, 100)
-            yaw_duty = rangify(float(data['yaw']), -100, 100)
-            pitch_duty = rangify(float(data['pitch']), -100, 100)
-            roll_duty = rangify(float(data['roll']), -100, 100)
+            throttle_cw_duty = throttle_acw_duty = rangify(float(data['throttle']), 0, 100)
+            throttle_delta =  rangify(float(data['yaw']), -100, 100, -16384, 16384)
 
-            throttle.duty_u16(int(throttle_duty))
-            yaw.duty_u16(int(yaw_duty))
+            throttle_acw_duty += throttle_delta
+            throttle_cw_duty -= throttle_delta
+
+            if throttle_acw_duty < 0:
+                throttle_acw_duty = 0
+            elif throttle_acw_duty > 65535:
+                throttle_acw_duty = 65535
+
+            if throttle_cw_duty < 0:
+                throttle_cw_duty = 0
+            elif throttle_cw_duty > 65535:
+                throttle_cw_duty = 65535
+
+            pitch_duty = rangify(float(data['pitch']), -100, 100, 1400, 7900)
+            roll_duty = rangify(float(data['roll']), -100, 100, 1400, 7900)
+
+            throttle_cw.duty_u16(int(rangify(throttle_cw_duty, 0, 65535)))
+            throttle_acw.duty_u16(int(rangify(throttle_acw_duty, 0, 65535, 3700, 4200)))
             pitch.duty_u16(int(pitch_duty))
             roll.duty_u16(int(roll_duty))
             
-            print(data)
+            print(rangify(throttle_cw_duty, 0, 65535, 3700, 4200), rangify(throttle_acw_duty, 0, 65535, 3700, 4200), pitch_duty, roll_duty)
         except:
             pass
 
